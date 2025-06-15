@@ -10,8 +10,6 @@ app = FastAPI()
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
 
-BASE_URL = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London,UK?key={API_KEY}"
-
 @app.get("/weather")
 async def get_weather(city: str = Query(..., description="Name city")):
     url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?key={API_KEY}"
