@@ -4,11 +4,13 @@ import os
 import uvicorn
 import httpx
 import redis
+import json
 
 app = FastAPI()
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 @app.get("/weather")
 async def get_weather(city: str = Query(..., description="Name city")):
