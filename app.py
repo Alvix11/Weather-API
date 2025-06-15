@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from dotenv import load_dotenv
 import os
 import uvicorn
@@ -12,13 +12,16 @@ API_KEY = os.getenv('API_KEY')
 
 BASE_URL = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London,UK?key={API_KEY}"
 
-r = redis.Redis(host='localhost', port=6379, db=0)
-r.set('test', 'funciona')
-#print(r.get('test').decode('utf-8'))
-
-@app.get("/consume-api")
-async def get_climate():
+@app.get("/weather")
+async def get_weather(city: str = Query(..., description="Name city")):
+    url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?key={API_KEY}"
     async with httpx.AsyncClient() as client:
-        response = await client.get(BASE_URL)
+        response = await client.get(url)
         data = response.json()
-        return data
+
+        result = {
+                "city": city,
+                "temperature": data["currentConditions"]["temp"],
+                "description": data["currentConditions"]["conditions"]
+                }
+        return result
