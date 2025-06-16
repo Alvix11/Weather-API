@@ -35,7 +35,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
                 data = response.json()
 
                 result = {
-                        "city": city,
+                        "city": city.capitalize(),
                         "temperature": data["currentConditions"]["temp"],
                         "description": data["currentConditions"]["conditions"]
                         }
