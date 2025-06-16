@@ -35,14 +35,18 @@ async def get_weather(city: str = Query(..., description="Name city")):
                 data = response.json()
 
                 result = {
-                        "city": city.capitalize(),
-                        "temperature": data["currentConditions"]["temp"],
-                        "description": data["currentConditions"]["conditions"],
-                        "datetime": data["currentConditions"]["datetime"],
-                        "humidity": data["currentConditions"]["humidity"]
+                        "Current conditions":{
+                                            "city": data["resolvedAddress"],
+                                            "temperature": data["currentConditions"]["temp"],
+                                            "humidity": data["currentConditions"]["humidity"],
+                                            "description": data["currentConditions"]["conditions"],
+                                            },
+                        "For the next 15 days":{    
+                                                "description": data["description"],   
+                                                }
                         }
 
-                redis_client.set(city.capitalize(), json.dumps(result), ex=3600)
+                redis_client.set(city.capitalize(), json.dumps(result), ex=1800)
                 print("devuelto de la api")
                 return result
 
