@@ -47,7 +47,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
                                                 }
                         }
 
-                redis_client.set(city.capitalize(), json.dumps(result), ex=1800)
+                redis_client.set(city.capitalize(), json.dumps(result), ex=3600)
                 print("devuelto de la api")
                 return result
 
