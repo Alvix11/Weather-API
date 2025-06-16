@@ -37,7 +37,9 @@ async def get_weather(city: str = Query(..., description="Name city")):
                 result = {
                         "city": city.capitalize(),
                         "temperature": data["currentConditions"]["temp"],
-                        "description": data["currentConditions"]["conditions"]
+                        "description": data["currentConditions"]["conditions"],
+                        "datetime": data["currentConditions"]["datetime"],
+                        "humidity": data["currentConditions"]["humidity"]
                         }
 
                 redis_client.set(city.capitalize(), json.dumps(result), ex=3600)
@@ -47,3 +49,5 @@ async def get_weather(city: str = Query(..., description="Name city")):
 for key in redis_client.keys():
     value = redis_client.get(key)
     print(key.decode(), value.decode())
+
+#redis_client.flushdb()
