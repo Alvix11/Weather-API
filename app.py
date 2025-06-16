@@ -33,11 +33,12 @@ async def get_weather(city: str = Query(..., description="Name city")):
             
             else:
                 data = response.json()
+                temperature = fahrenheit_to_celsius(data["currentConditions"]["temp"])
 
                 result = {
                         "Current conditions":{
                                             "city": data["resolvedAddress"],
-                                            "temperature": data["currentConditions"]["temp"],
+                                            "temperature": f"{temperature}°C",
                                             "humidity": data["currentConditions"]["humidity"],
                                             "description": data["currentConditions"]["conditions"],
                                             },
@@ -54,7 +55,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
     value = redis_client.get(key)
     print(key.decode(), value.decode())'''
 
-def fahrenheit_to_celsius(fahrenheit: int):
+def fahrenheit_to_celsius(fahrenheit: float):
     celsius = round((fahrenheit - 32) * 5 / 9, 2)
     return celsius
 
