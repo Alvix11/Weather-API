@@ -50,8 +50,12 @@ async def get_weather(city: str = Query(..., description="Name city")):
                 print("devuelto de la api")
                 return result
 
-for key in redis_client.keys():
+'''for key in redis_client.keys():
     value = redis_client.get(key)
-    print(key.decode(), value.decode())
+    print(key.decode(), value.decode())'''
+
+def fahrenheit_to_celsius(fahrenheit: int):
+    celsius = round((fahrenheit - 32) * 5 / 9, 2)
+    return celsius
 
 #redis_client.flushdb()
