@@ -23,7 +23,7 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0)
 async def get_weather(city: str = Query(..., description="Name city")):
 
     url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?key={API_KEY}"
-    cached = redis_client.get(city.lower())
+    cached = redis_client.get(city.strip().lower())
 
     if cached:
         result = json.loads(cached)
@@ -62,7 +62,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
                                             "description": data["description"],   
                                             }
                     }
-            redis_client.set(city.lower(), json.dumps(result), ex=3600)
+            redis_client.set(city.strip().lower(), json.dumps(result), ex=3600)
             logging.info("Information obtained from API")
             return result
 
