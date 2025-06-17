@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from dotenv import load_dotenv
 import os
 import redis.client
@@ -28,8 +28,9 @@ async def get_weather(city: str = Query(..., description="Name city")):
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
 
-            if response.status_code != 200:
-                return {"Error": "City not found or API error."}
+            response_detail = handle_errors(response)
+            if response_detail:
+                raise HTTPException(status_code=response.status_code, detail=response_detail)
             
             else:
                 data = response.json()
@@ -59,4 +60,19 @@ def fahrenheit_to_celsius(fahrenheit: float):
     celsius = round((fahrenheit - 32) * 5 / 9, 2)
     return celsius
 
+def handle_errors(response):
+    if response.status_code == 404:
+        return "Page not found"
+    elif response.status_code == 500:
+        return "A general error occurred while processing the request."
+    elif response.status_code == 400:
+        return "The format of the API is incorrect or an invalid parameter or combination of parameters was supplied."
+    elif response.status_code == 401:
+        return"There is a problem with the API key, account or subscription."
+    elif response.status_code == 429:
+        return "The account has exceeded their assigned limits."
+    elif response.status_code != 200:
+        return f"Unexpected error: {response.status_code}"
+    return None
+        
 #redis_client.flushdb()
