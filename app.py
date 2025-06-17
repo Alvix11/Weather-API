@@ -6,6 +6,12 @@ import uvicorn
 import httpx
 import redis
 import json
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 app = FastAPI()
 
@@ -56,9 +62,9 @@ async def get_weather(city: str = Query(..., description="Name city")):
             print("devuelto de la api")
             return result
 
-for key in redis_client.keys():
+'''for key in redis_client.keys():
     value = redis_client.get(key)
-    print(key.decode(), value.decode())
+    print(key.decode(), value.decode())'''
 
 def fahrenheit_to_celsius(fahrenheit: float):
     celsius = round((fahrenheit - 32) * 5 / 9, 2)
