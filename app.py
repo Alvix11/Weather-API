@@ -50,7 +50,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
             result = {
                     "Current conditions":{
                                         "city": data["resolvedAddress"],
-                                        "temperature": f"{temperature}°C",
+                                        "temperature": f"{temperature}",
                                         "humidity": data["currentConditions"]["humidity"],
                                         "description": data["currentConditions"]["conditions"],
                                         },
@@ -67,9 +67,13 @@ async def get_weather(city: str = Query(..., description="Name city")):
     print(key.decode(), value.decode())'''
 
 def fahrenheit_to_celsius(fahrenheit: float):
-    celsius = round((fahrenheit - 32) * 5 / 9, 2)
-    logging.info(f"Converted {fahrenheit}F to {celsius}C")
-    return celsius
+    try:
+        celsius = round((fahrenheit - 32) * 5 / 9, 2)
+        logging.info(f"Converted {fahrenheit}F to {celsius}C")
+        return celsius
+    except Exception as e:
+        logging.info(f"Unexpected error in converting Fahrenheit to Celsius: {e}")
+        return fahrenheit
 
 def handle_errors(response):
     if response.status_code == 404:
