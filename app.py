@@ -25,32 +25,36 @@ async def get_weather(city: str = Query(..., description="Name city")):
         return result
     
     else:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-
-            response_detail = handle_errors(response)
-            if response_detail:
-                raise HTTPException(status_code=response.status_code, detail=response_detail)
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url)
+        except httpx.RequestError:
+            raise HTTPException(status_code=503, detail="Could not connect to the weather service.")
+        
+        response_detail = handle_errors(response)
+        if response_detail:
+            raise HTTPException(status_code=response.status_code, detail=response_detail)
+        
+        else:
+            data = response.json()
+            if "currentConditions" not in data:
+                raise HTTPException(status_code=500, detail="Unexpected response from the weather API.")
             
-            else:
-                data = response.json()
-                temperature = fahrenheit_to_celsius(data["currentConditions"]["temp"])
-
-                result = {
-                        "Current conditions":{
-                                            "city": data["resolvedAddress"],
-                                            "temperature": f"{temperature}°C",
-                                            "humidity": data["currentConditions"]["humidity"],
-                                            "description": data["currentConditions"]["conditions"],
-                                            },
-                        "For the next 15 days":{    
-                                                "description": data["description"],   
-                                                }
-                        }
-
-                redis_client.set(city.capitalize(), json.dumps(result), ex=3600)
-                print("devuelto de la api")
-                return result
+            temperature = fahrenheit_to_celsius(data["currentConditions"]["temp"])
+            result = {
+                    "Current conditions":{
+                                        "city": data["resolvedAddress"],
+                                        "temperature": f"{temperature}°C",
+                                        "humidity": data["currentConditions"]["humidity"],
+                                        "description": data["currentConditions"]["conditions"],
+                                        },
+                    "For the next 15 days":{    
+                                            "description": data["description"],   
+                                            }
+                    }
+            redis_client.set(city.capitalize(), json.dumps(result), ex=3600)
+            print("devuelto de la api")
+            return result
 
 '''for key in redis_client.keys():
     value = redis_client.get(key)
