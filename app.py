@@ -10,7 +10,7 @@ import logging
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(levelname)s - %(message)s"
 )
 
 app = FastAPI()
@@ -27,7 +27,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
 
     if cached:
         result = json.loads(cached)
-        print("Devuelto de redis")
+        logging.info("Information obtained from Redis")
         return result
     
     else:
@@ -59,7 +59,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
                                             }
                     }
             redis_client.set(city.lower(), json.dumps(result), ex=3600)
-            print("devuelto de la api")
+            logging.info("Information obtained from API")
             return result
 
 '''for key in redis_client.keys():
@@ -68,6 +68,7 @@ async def get_weather(city: str = Query(..., description="Name city")):
 
 def fahrenheit_to_celsius(fahrenheit: float):
     celsius = round((fahrenheit - 32) * 5 / 9, 2)
+    logging.info(f"Converted {fahrenheit}F to {celsius}C")
     return celsius
 
 def handle_errors(response):
