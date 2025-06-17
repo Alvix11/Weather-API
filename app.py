@@ -34,16 +34,20 @@ async def get_weather(city: str = Query(..., description="Name city")):
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(url)
+                logging.info("Requesting the API correctly")
         except httpx.RequestError:
+            logging.warning("An error occurred while connecting to the API.")
             raise HTTPException(status_code=503, detail="Could not connect to the weather service.")
         
         response_detail = handle_errors(response)
         if response_detail:
+            logging.info(f"Unexpected response code {response.status_code}")
             raise HTTPException(status_code=response.status_code, detail=response_detail)
         
         else:
             data = response.json()
             if "currentConditions" not in data:
+                logging.critical("The current conditions were not returned by the API.")
                 raise HTTPException(status_code=500, detail="Unexpected response from the weather API.")
             
             temperature = fahrenheit_to_celsius(data["currentConditions"]["temp"])
