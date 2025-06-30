@@ -40,8 +40,8 @@ Weather-API/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/weather-api-wrapper.git
-cd weather-api-wrapper
+git clone https://github.com/yourusername/weather-api.git
+cd weather-api
 ```
 
 ### 2. Create and activate a virtual environment
@@ -67,7 +67,14 @@ API_KEY=your_visualcrossing_api_key
 
 ### 5. Start Redis
 
-Make sure you have Redis running locally on port 6379.
+You can run Redis **locally** (default port 6379) or use **Docker**:
+
+```bash
+docker run -d -p 6379:6379 --name redis redis
+```
+
+> **Note:**  
+> You can use either a local Redis installation or Docker, depending on your preference.
 
 ### 6. Run the API
 
