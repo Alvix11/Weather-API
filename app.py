@@ -21,7 +21,11 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0)
 @app.get("/weather")
 async def get_weather(city: str = Query(..., description="Name city")):
 
+    if not city or not city.strip():
+        raise HTTPException(status_code=400, detail="City parameter cannot be empty.")
+
     url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?key={API_KEY}"
+
     city_key = city.strip().lower()
     cached = redis_client.get(city_key)
 
