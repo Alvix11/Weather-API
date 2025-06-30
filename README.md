@@ -5,6 +5,8 @@ It acts as a wrapper around the Visual Crossing Weather API, caches results usin
 
 ---
 
+This project is an implementation based on a proposal from [Roadmap.sh](https://roadmap.sh/projects/weather-api-wrapper-service) to practice and improve backend development skills with FastAPI.
+
 ## Features
 
 - **/weather endpoint:** Get current weather and 15-day forecast for any city.
